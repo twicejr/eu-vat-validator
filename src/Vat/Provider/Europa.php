@@ -20,16 +20,26 @@ class Europa implements Providable
 
     private $oClient;
 
+    protected $timeout = "30";
+    private $orig_sock_timeout;
+    
     /**
      * @throws SoapFault
      */
     public function __construct()
     {
         try {
+            $this->orig_sock_timeout = ini_get('default_socket_timeout');
+            ini_set('default_socket_timeout', $this->timeout);
             $this->oClient = new SoapClient($this->getApiUrl());
         } catch(SoapFault $oExcept) {
-            exit('Impossible to connect to the europa SOAP  : ' . $oExcept->faultstring);
+            throw new Exception('Impossible to connect to the europa SOAP  : ' . $oExcept->faultstring);
         }
+    }
+    
+    public function __destruct()
+    {
+        ini_set('default_socket_timeout', $this->orig_sock_timeout);
     }
 
     public function getApiUrl(): string
