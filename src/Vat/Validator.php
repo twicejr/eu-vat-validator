@@ -75,6 +75,6 @@ class Validator implements Validatable
 
     protected function removeNewLines(string $sString): string
     {
-        return str_replace(["\n", "\r\n"], ', ', $sString);
+        return str_replace(["\n", "\r\n"], ', ', trim($sString));
     }
 }
