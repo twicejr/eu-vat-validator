@@ -20,7 +20,7 @@ class Europa implements Providable
 
     private $oClient;
 
-    protected $timeout = "30";
+    protected $timeout = "60";
     private $orig_sock_timeout;
     
     /**
