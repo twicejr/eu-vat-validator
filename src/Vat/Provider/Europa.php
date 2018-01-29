@@ -20,7 +20,8 @@ class Europa implements Providable
 
     private $oClient;
 
-    protected $timeout = "60";
+    protected $timeout = "15";
+    protected $max_attempts = 3;
     private $orig_sock_timeout;
     
     /**
@@ -57,6 +58,27 @@ class Europa implements Providable
      * @throws Exception
      */
     public function getResource($sVatNumber, string $sCountryCode): stdClass
+    {
+        //ignore exceptions for x times.
+        for($i = 1; $i <= $this->max_attempts; $i++)
+        {
+            try
+            {
+                $result = $this->_getResource($sVatNumber, $sCountryCode);
+                return $result;
+            }
+            catch(Exception $e)
+            {
+                if($i === $this->max_attempts)
+                {
+                    throw $e;
+                }
+                usleep(100000); //1/10th
+            }
+        }
+    }
+    
+    protected function _getResource($sVatNumber, string $sCountryCode): stdClass
     {
         try {
             $aDetails = [
